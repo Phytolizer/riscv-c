@@ -3,22 +3,22 @@
 
 #include <stdint.h>
 
-typedef struct MMIODevice MMIODevice;
+typedef struct MmioDevice MmioDevice;
 
-typedef uint32_t MMIODeviceRead(MMIODevice* device, uint32_t address);
-typedef void MMIODeviceWrite(MMIODevice* device, uint32_t address, uint32_t value);
+typedef uint32_t MmioDeviceRead(MmioDevice* device, uint32_t address);
+typedef void MmioDeviceWrite(MmioDevice* device, uint32_t address, uint32_t value);
 
-typedef struct MMIODeviceOps {
-    MMIODeviceRead* read;
-    MMIODeviceWrite* write;
-} MMIODeviceOps;
+typedef struct MmioDeviceOps {
+    MmioDeviceRead* read;
+    MmioDeviceWrite* write;
+} MmioDeviceOps;
 
-struct MMIODevice {
-    const MMIODeviceOps* ops;
+struct MmioDevice {
+    const MmioDeviceOps* ops;
     void* cb_arg;
 };
 
-uint32_t mmio_device_read(MMIODevice* device, uint32_t address);
-void mmio_device_write(MMIODevice* device, uint32_t address, uint32_t value);
+uint32_t mmio_device_read(MmioDevice* device, uint32_t address);
+void mmio_device_write(MmioDevice* device, uint32_t address, uint32_t value);
 
 #endif  // RISCV_MMIO_DEVICE_H_

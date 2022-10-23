@@ -32,14 +32,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "str/str.h"
 
-#include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
 #define STRNICMP _strnicmp
 #else
-#include <strings.h>
 #define STRNICMP strncasecmp
 #endif
 
@@ -60,32 +58,10 @@ static inline void str_mem_free(void* p) {
 // string deallocation
 void str_free(const str s) {
     if (str_is_owner(s)) {
+        // NOLINTNEXTLINE(clang-diagnostic-cast-qual)
         str_mem_free((void*)s.ptr);
     }
 }
-
-// memory allocation helpers
-#define REALLOC(p, n) \
-    ({ \
-        void* const s___ = (p); \
-        void* const p___ = realloc(s___, (n)); \
-        if (!p___) { \
-            str_mem_free(s___); \
-            return ENOMEM; \
-        } \
-        p___; \
-    })
-
-// errno checker
-#define EINTR_RETRY(expr) \
-    while ((expr) < 0) { \
-        do { \
-            const int __err = errno; \
-            if (__err != EINTR) { \
-                return __err; \
-            } \
-        } while (0); \
-    }
 
 // swap
 void str_swap(str* const s1, str* const s2) {
@@ -166,10 +142,11 @@ str str_acquire(const char* const s) {
     return s ? str_acquire_chars(s, strlen(s)) : str_null;
 }
 
-static str str_vprintf(const char* const fmt, va_list ap) {
+static str str_vprintf(const char* const fmt, const va_list ap) {
     va_list ap2;
     va_copy(ap2, ap);
 
+    // NOLINTNEXTLINE(clang-diagnostic-format-nonliteral)
     const int n = vsnprintf(NULL, 0, fmt, ap2);
 
     va_end(ap2);
@@ -184,20 +161,21 @@ static str str_vprintf(const char* const fmt, va_list ap) {
         return str_null;
     }
 
+    // NOLINTNEXTLINE(clang-diagnostic-format-nonliteral)
     (void)vsnprintf(s, (size_t)n + 1, fmt, ap);
 
-    return str_acquire_chars(s, (size_t)n);
+    return str_acquire_chars(s, n);
 }
 
 str str_printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    str s = str_vprintf(fmt, args);
+    const str s = str_vprintf(fmt, args);
     va_end(args);
     return s;
 }
 
-str str_trim_left(str s, str char_set) {
+str str_trim_left(const str s, const str char_set) {
     if (s.len == 0) {
         return s;
     }
@@ -245,7 +223,7 @@ int str_cpy(str* const dest, const str s) {
     return 0;
 }
 
-str str_dup(str s) {
+str str_dup(const str s) {
     str s2 = str_null;
     str_cpy(&s2, s);
     return s2;
@@ -357,6 +335,8 @@ static const void* memmem(const void* s, const size_t len, const void* patt, siz
             return s;
         case 1:
             return memchr(s, *(const unsigned char*)patt, len);
+        default:
+            break;
     }
 
     const char* cs = s;
@@ -507,7 +487,7 @@ const str* str_search_range(const str key, const str* const array, const size_t 
 }
 
 // partitioning
-size_t str_partition_range(bool (*pred)(const str), str* const array, const size_t count) {
+size_t str_partition_range(bool (*pred)(str), str* const array, const size_t count) {
     if (!array) {
         return 0;
     }

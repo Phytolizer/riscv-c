@@ -71,21 +71,22 @@ static size_t platform_filelen(PlatformFile f) {
 static size_t platform_fread(PlatformFile f, char* buf, size_t len) {
 #ifdef _WIN32
     DWORD read;
+    // ReSharper disable once CppRedundantCastExpression
     ReadFile(f.handle, buf, (DWORD)len, &read, NULL);
-    return (size_t)read;
+    return read;
 #else
     return (size_t)read(f.fd, buf, len);
 #endif
 }
 
-SlurpFileResult slurp_file(str filename) {
-    PlatformFile f = platform_fopen(filename);
+SlurpFileResult slurp_file(const str filename) {
+    const PlatformFile f = platform_fopen(filename);
     if (!f.valid) {
         str msg = str_printf("failed to open '" str_fmt "' for reading", str_arg(filename));
         return (SlurpFileResult)SUM_ERR(msg);
     }
 
-    size_t len = platform_filelen(f);
+    const size_t len = platform_filelen(f);
 
     char* buf = malloc(len + 1);
     if (buf == NULL) {
@@ -95,7 +96,7 @@ SlurpFileResult slurp_file(str filename) {
         return (SlurpFileResult)SUM_ERR(msg);
     }
 
-    size_t read = platform_fread(f, buf, len);
+    const size_t read = platform_fread(f, buf, len);
     if (read != len) {
         platform_fclose(f);
         free(buf);
@@ -168,7 +169,7 @@ static PlatformMkdirResult platform_mkdir(str path) {
         return (PlatformMkdirResult)SUM_NOTHING;
     }
 
-    DWORD error = GetLastError();
+    const DWORD error = GetLastError();
     if (error == ERROR_ALREADY_EXISTS) {
         return (PlatformMkdirResult)SUM_NOTHING;
     }
@@ -224,14 +225,14 @@ FileMkdirRecError file_mkdir_rec(str path) {
         return (FileMkdirRecError)SUM_JUST(msg);
     }
 
-    str_find_result last_slash = str_find_last(path, '/');
+    const str_find_result last_slash = str_find_last(path, '/');
     if (!last_slash.found) {
         str_free(path);
         return (FileMkdirRecError)SUM_NOTHING;
     }
 
-    str parent = str_upto(path, last_slash.pos);
-    FileMkdirRecError parent_err = file_mkdir_rec(parent);
+    const str parent = str_upto(path, last_slash.pos);
+    const FileMkdirRecError parent_err = file_mkdir_rec(parent);
     if (parent_err.present) {
         str_free(path);
         return parent_err;

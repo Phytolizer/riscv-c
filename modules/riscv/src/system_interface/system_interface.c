@@ -6,22 +6,22 @@
 #include "riscv/support/masks.h"
 #include "riscv/system_interface/memory_map.h"
 
-static uint32_t system_interface_read(MMIODevice* device, uint32_t address);
-static void system_interface_write(MMIODevice* device, uint32_t address, uint32_t value);
+static uint32_t system_interface_read(MmioDevice* device, uint32_t address);
+static void system_interface_write(MmioDevice* device, uint32_t address, uint32_t value);
 
-static const MMIODeviceOps ops = {
+static const MmioDeviceOps ops = {
     .read = system_interface_read,
     .write = system_interface_write,
 };
 
-void system_interface_init(SystemInterface* iface, ROMDevice* rom, RAMDevice* ram) {
+void system_interface_init(SystemInterface* iface, RomDevice* rom, RamDevice* ram) {
     iface->super.ops = &ops;
     iface->super.cb_arg = iface;
     iface->rom = rom;
     iface->ram = ram;
 }
 
-static uint32_t system_interface_read(MMIODevice* device, uint32_t address) {
+static uint32_t system_interface_read(MmioDevice* device, uint32_t address) {
     const SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
     assert((address & 0x3) == 0 && "Unaligned memory access");
     if (MASKS(address, MEMORY_MAP_PROGRAM_ROM_START)) {
@@ -39,7 +39,7 @@ static uint32_t system_interface_read(MMIODevice* device, uint32_t address) {
     return 0;
 }
 
-static void system_interface_write(MMIODevice* device, uint32_t address, uint32_t value) {
+static void system_interface_write(MmioDevice* device, uint32_t address, uint32_t value) {
     const SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
     assert((address & 0x3) == 0 && "Unaligned memory access");
     if (MASKS(address, MEMORY_MAP_RAM_START)) {

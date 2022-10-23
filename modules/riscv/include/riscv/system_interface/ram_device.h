@@ -6,12 +6,12 @@
 
 enum { RAM_SIZE = 1024 * 1024 * 4 };
 
-typedef struct RAMDevice {
-    MMIODevice super;
+typedef struct RamDevice {
+    MmioDevice super;
     UInt32Buf ram;
-} RAMDevice;
+} RamDevice;
 
-void ram_device_init(RAMDevice* device);
-void ram_device_free(RAMDevice device);
+void ram_device_init(RamDevice* device);
+void ram_device_free(RamDevice device);
 
 #endif  // RISCV_SYSTEM_INTERFACE_RAM_H_

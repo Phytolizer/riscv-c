@@ -13,9 +13,9 @@
 
 typedef STRTOX_RESULT(uint64_t) Str2U64Result;
 
-Str2U64Result str2u64(str s, int base);
+Str2U64Result str_to_u64(str in, int base);
 
 typedef STRTOX_RESULT(int64_t) Str2I64Result;
 
 // NOTE: Does not handle negative numbers!
-Str2I64Result str2i64(str s, int base);
+Str2I64Result str_to_i64(str s, int base);

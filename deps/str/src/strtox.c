@@ -2,7 +2,6 @@
 
 #include <errno.h>
 #include <stdbool.h>
-#include <stddef.h>
 
 static bool char_is_space(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
@@ -35,7 +34,7 @@ static uint64_t str2u64_cutlim(unsigned int i) {
     return UINT64_MAX % i;
 }
 
-Str2U64Result str2u64(str in, int base) {
+Str2U64Result str_to_u64(str in, int base) {
     const uint64_t cutoff_tab[] = MKTAB(str2u64_cutoff);
     const uint64_t cutlim_tab[] = MKTAB(str2u64_cutlim);
 
@@ -71,8 +70,8 @@ Str2U64Result str2u64(str in, int base) {
     save = s;
 
     size_t end = str_len(in);
-    uint64_t cutoff = cutoff_tab[base - 2];
-    uint64_t cutlim = cutlim_tab[base - 2];
+    const uint64_t cutoff = cutoff_tab[base - 2];
+    const uint64_t cutlim = cutlim_tab[base - 2];
     bool overflow = false;
     char c = str_getc(in, s);
 
@@ -120,8 +119,8 @@ Str2U64Result str2u64(str in, int base) {
     return (Str2U64Result){.value = i, .endptr = str_ptr(in) + end};
 }
 
-Str2I64Result str2i64(str s, int base) {
-    Str2U64Result r = str2u64(s, base);
+Str2I64Result str_to_i64(str s, int base) {
+    Str2U64Result r = str_to_u64(s, base);
     if (r.err != 0) {
         return (Str2I64Result){.err = r.err};
     }

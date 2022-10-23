@@ -5,7 +5,7 @@
 #include "riscv/rvi32_system.h"
 
 int main() {
-    RVI32System rv;
+    Rvi32System rv;
     rvi32_system_init(&rv);
     uint32_t test_rom[] = {0xDEADBEEF, 0xC0DECAFE};
     rom_device_load(&rv.rom, (UInt32Buf)BUF_ARRAY(test_rom));

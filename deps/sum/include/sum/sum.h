@@ -9,7 +9,7 @@
     }
 
 #define SUM_JUST(v) \
-    { .present = true, .value = v, }
+    { .present = true, .value = (v), }
 
 #define SUM_NOTHING \
     { .present = false, }
