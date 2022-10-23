@@ -1,3 +1,4 @@
 /out/
 CMakeUserPresets.json
 .clangd
+/.vs/

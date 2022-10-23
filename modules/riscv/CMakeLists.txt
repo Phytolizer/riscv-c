@@ -9,6 +9,8 @@ add_executable(
   src/register32.c
   src/pipeline/pipeline_stage.c
   src/pipeline/instruction_fetch.c
+  src/pipeline/instruction_decode.c
+  src/pipeline/execute.c
 )
 target_link_libraries(
   riscv PRIVATE buf::buf str::str println::println file::file

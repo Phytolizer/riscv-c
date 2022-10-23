@@ -12,7 +12,7 @@ void rvi32_system_init(RVI32System* system) {
     instruction_fetch_init(
         &system->ifetch,
         (InstructionFetchParams){
-            .bus = (SystemInterface*)&system->bus,
+            .bus = &system->bus,
             .should_stall =
                 (InstructionFetchShouldStall){
                     .cb = ifetch_should_stall,
@@ -38,7 +38,7 @@ void rvi32_system_init(RVI32System* system) {
     );
 }
 
-void rvi32_system_free(RVI32System system) {
+void rvi32_system_free(const RVI32System system) {
     rom_device_free(system.rom);
     ram_device_free(system.ram);
 }
@@ -59,12 +59,12 @@ void rvi32_system_cycle(RVI32System* system) {
 }
 
 static bool ifetch_should_stall(void* arg) {
-    RVI32System* system = arg;
+    const RVI32System* system = arg;
     return system->state != STATE_INSTRUCTION_FETCH;
 }
 
 static bool idecode_should_stall(void* arg) {
-    RVI32System* system = arg;
+    const RVI32System* system = arg;
     return system->state != STATE_DECODE;
 }
 

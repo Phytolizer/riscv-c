@@ -11,7 +11,7 @@ const PipelineStageOps ops = {
     .latch_next = instruction_fetch_latch_next,
 };
 
-void instruction_fetch_init(InstructionFetch* fetch, InstructionFetchParams params) {
+void instruction_fetch_init(InstructionFetch* fetch, const InstructionFetchParams params) {
     fetch->super.ops = &ops;
     fetch->super.cb_arg = fetch;
     fetch->pc.value = MEMORY_MAP_PROGRAM_ROM_START;

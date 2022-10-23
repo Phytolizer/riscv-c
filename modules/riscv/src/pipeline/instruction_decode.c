@@ -12,7 +12,7 @@ static const PipelineStageOps ops = {
     .latch_next = instruction_decode_latch_next,
 };
 
-void instruction_decode_init(InstructionDecode* decode, InstructionDecodeParams params) {
+void instruction_decode_init(InstructionDecode* decode, const InstructionDecodeParams params) {
     decode->super.ops = &ops;
     decode->super.cb_arg = decode;
     memset(&decode->d, 0, sizeof(decode->d));

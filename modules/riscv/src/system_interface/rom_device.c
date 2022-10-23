@@ -17,11 +17,11 @@ void rom_device_init(ROMDevice* device) {
     device->rom = (UInt32Buf)BUF_OWNER(rom, ROM_SIZE / sizeof(uint32_t));
 }
 
-void rom_device_free(ROMDevice device) {
+void rom_device_free(const ROMDevice device) {
     BUF_FREE(device.rom);
 }
 
-void rom_device_load(ROMDevice* device, UInt32Buf data) {
+void rom_device_load(ROMDevice* device, const UInt32Buf data) {
     for (uint64_t i = 0; i < ROM_SIZE / sizeof(uint32_t); i++) {
         if (i >= data.len) {
             device->rom.ptr[i] = UINT32_C(0xFFFFFFFF);
@@ -32,11 +32,11 @@ void rom_device_load(ROMDevice* device, UInt32Buf data) {
 }
 
 static uint32_t rom_device_read(MMIODevice* device, uint32_t address) {
-    ROMDevice* rom = CONTAINER_OF(device, ROMDevice, super);
+    const ROMDevice* rom = CONTAINER_OF(device, ROMDevice, super);
     return rom->rom.ptr[(size_t)address % (ROM_SIZE / sizeof(uint32_t))];
 }
 
-static void rom_device_write(MMIODevice* device, uint32_t address, uint32_t value) {
+static void rom_device_write(MMIODevice* device, const uint32_t address, const uint32_t value) {
     // ROM is read-only
     (void)device;
     (void)address;

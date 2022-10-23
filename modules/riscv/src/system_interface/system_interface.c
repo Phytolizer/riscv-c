@@ -22,7 +22,7 @@ void system_interface_init(SystemInterface* iface, ROMDevice* rom, RAMDevice* ra
 }
 
 static uint32_t system_interface_read(MMIODevice* device, uint32_t address) {
-    SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
+    const SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
     assert((address & 0x3) == 0 && "Unaligned memory access");
     if (MASKS(address, MEMORY_MAP_PROGRAM_ROM_START)) {
         return mmio_device_read(
@@ -40,7 +40,7 @@ static uint32_t system_interface_read(MMIODevice* device, uint32_t address) {
 }
 
 static void system_interface_write(MMIODevice* device, uint32_t address, uint32_t value) {
-    SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
+    const SystemInterface* iface = CONTAINER_OF(device, SystemInterface, super);
     assert((address & 0x3) == 0 && "Unaligned memory access");
     if (MASKS(address, MEMORY_MAP_RAM_START)) {
         mmio_device_write(
